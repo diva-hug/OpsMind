@@ -1,6 +1,8 @@
+
 from pathlib import Path
 import os
 
+import streamlit as st
 from dotenv import load_dotenv
 from groq import Groq
 
@@ -15,14 +17,16 @@ load_dotenv(PROJECT_ROOT / ".env")
 api_key = os.getenv("GROQ_API_KEY")
 
 if not api_key:
-    raise ValueError(
-        "GROQ_API_KEY not found in .env"
-    )
+    try:
+        api_key = st.secrets["GROQ_API_KEY"]
+    except Exception:
+        api_key = None
+
+if not api_key:
+    raise ValueError("GROQ_API_KEY not found")
 
 
-client = Groq(
-    api_key=api_key
-)
+client = Groq(api_key=api_key)
 
 
 def generate_answer(query):
@@ -47,9 +51,8 @@ def generate_answer(query):
             f"Content:\n{result['content']}"
         )
 
-    context = "\n\n".join(
-        context_parts
-    )
+    context = "\n\n".join(context_parts)
+
 
     prompt = f"""
 You are OpsMind, an internal engineering knowledge assistant.
@@ -71,6 +74,7 @@ User Question:
 Answer:
 """
 
+
     response = client.chat.completions.create(
         model="openai/gpt-oss-20b",
         messages=[
@@ -82,7 +86,9 @@ Answer:
         temperature=0
     )
 
+
     answer = response.choices[0].message.content
+
 
     sources = []
 
@@ -93,26 +99,25 @@ Answer:
         if source not in sources:
             sources.append(source)
 
+
     source_text = "\n\nSources:\n"
 
     for source in sources:
         source_text += f"- {source}\n"
+
 
     return answer + source_text
 
 
 if __name__ == "__main__":
 
-    query = input(
-        "Enter your question: "
-    )
+    query = input("Enter your question: ")
 
-    answer = generate_answer(
-        query
-    )
+    answer = generate_answer(query)
 
     print()
     print("OpsMind Answer:")
     print("-" * 70)
     print(answer)
     print("-" * 70)
+
