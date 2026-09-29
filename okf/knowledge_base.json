@@ -1,0 +1,1568 @@
+[
+  {
+    "id": "README--0",
+    "source": "README.md",
+    "metadata": {},
+    "content": "# OpsMind — AI-Powered Internal Engineering Knowledge Assistant\n\nOpsMind is an AI-powered internal engineering knowledge assistant designed to help engineering teams quickly investigate operational issues using company knowledge, incident records, service documentation, architecture documents, runbooks, and policies.\n\nThe project combines **OKF-based knowledge organization, semantic search, FAISS vector retrieval, RAG, Groq LLM, Streamlit, and MCP tools** into one practical engineering support system.\n\n---"
+  },
+  {
+    "id": "README--1",
+    "source": "README.md",
+    "metadata": {},
+    "content": "## Project Overview\n\nIn a typical engineering environment, operational knowledge is distributed across incident reports, service documentation, architecture documents, runbooks, and company policies.\n\nFinding the correct information manually can take time.\n\nOpsMind provides a centralized AI-based interface where engineers can ask questions such as:\n\n* Why are orders failing?\n* What should I do when the Payment API returns a 500 error?\n* How do I troubleshoot an authentication failure?\n* What services does the Order Service depend on?\n* Which incidents are related to order failures?\n* What information is available about a particular service?\n\nOpsMind retrieves relevant internal knowledge and uses an LLM to generate an answer based only on the retrieved context.\n\n---"
+  },
+  {
+    "id": "README--2",
+    "source": "README.md",
+    "metadata": {},
+    "content": "## Key Features\n\n* Internal engineering knowledge base\n* OKF-style structured knowledge organization\n* Document chunking and knowledge-base generation\n* Semantic search using sentence embeddings\n* FAISS vector similarity search\n* RAG-based question answering\n* Groq LLM integration\n* Source-aware answers\n* Relevance filtering for unknown questions\n* Streamlit web interface\n* MCP server with reusable engineering tools\n* Incident and service dependency search\n\n---"
+  },
+  {
+    "id": "README--3",
+    "source": "README.md",
+    "metadata": {},
+    "content": "## Architecture\n\n```text\n                    Engineering Knowledge\n                            |\n                            v\n                +-------------------------+\n                |      Knowledge Docs     |\n                |-------------------------|\n                | Services                |\n                | Incidents               |\n                | Runbooks                |\n                | Architecture            |\n                | Policies                |\n                +------------+------------+\n                             |\n                             v\n                     build_okf.py\n                             |\n                             v\n                  Knowledge Base\n                  129 Knowledge Chunks\n                             |\n                             v\n                  Sentence Transformers\n                   all-MiniLM-L6-v2\n                             |\n                             v\n                    384-D Embeddings\n                             |\n                             v\n                         FAISS\n                             |\n                             v\n                 Semantic Retrieval\n                             |\n                             v\n                       Groq LLM\n                             |\n                             v\n                  Answer + Sources\n                             |\n                             v\n                      Streamlit UI\n\n\n                    MCP Integration\n                            |\n            +---------------+----------------+\n            |               |                |\n            v               v                v\n   search_knowledge  search_incidents  service_dependencies\n```\n\n---"
+  },
+  {
+    "id": "README--4",
+    "source": "README.md",
+    "metadata": {},
+    "content": "## RAG Workflow\n\nOpsMind follows a Retrieval-Augmented Generation workflow.\n\n```text\nUser Question\n      |\n      v\nQuestion Embedding\n      |\n      v\nFAISS Semantic Search\n      |\n      v\nRelevant Knowledge Chunks\n      |\n      v\nContext Construction\n      |\n      v\nGroq LLM\n      |\n      v\nGrounded Answer\n      |\n      v\nSources\n```\n\nThe LLM receives retrieved company knowledge as context and is instructed to answer using that context rather than inventing information.\n\n---"
+  },
+  {
+    "id": "README--5",
+    "source": "README.md",
+    "metadata": {},
+    "content": "## Knowledge Base\n\nThe project contains engineering knowledge organized into different categories."
+  },
+  {
+    "id": "README--6",
+    "source": "README.md",
+    "metadata": {},
+    "content": "### Services\n\nExamples:\n\n* Authentication Service\n* Order Service\n* Inventory Service\n* Payment API\n* Notification Service\n* Search Service"
+  },
+  {
+    "id": "README--7",
+    "source": "README.md",
+    "metadata": {},
+    "content": "### Incidents\n\nExamples:\n\n* Order Service HTTP 500 errors\n* Authentication failures\n* Payment timeout\n* Inventory synchronization issues\n* Deployment failures\n* Database timeout incidents"
+  },
+  {
+    "id": "README--8",
+    "source": "README.md",
+    "metadata": {},
+    "content": "### Runbooks\n\nExamples:\n\n* Authentication failure troubleshooting\n* Database timeout troubleshooting\n* Inventory synchronization failure\n* Order API 500 troubleshooting\n* Payment API 500 troubleshooting\n* Service degradation handling"
+  },
+  {
+    "id": "README--9",
+    "source": "README.md",
+    "metadata": {},
+    "content": "### Architecture\n\nExamples:\n\n* Database architecture\n* Service dependencies\n* System architecture"
+  },
+  {
+    "id": "README--10",
+    "source": "README.md",
+    "metadata": {},
+    "content": "### Policies\n\nExamples:\n\n* Deployment policy\n* Escalation policy\n* Incident severity policy\n\n---"
+  },
+  {
+    "id": "README--11",
+    "source": "README.md",
+    "metadata": {},
+    "content": "## OKF Knowledge Processing\n\nThe project uses `build_okf.py` to process the engineering documentation.\n\nThe pipeline is:\n\n```text\nMarkdown Documents\n       |\n       v\nDocument Processing\n       |\n       v\nSection Chunking\n       |\n       v\nMetadata Extraction\n       |\n       v\nknowledge_base.json\n```\n\nThe current knowledge base contains:\n\n```text\n129 knowledge chunks\n```\n\n---"
+  },
+  {
+    "id": "README--12",
+    "source": "README.md",
+    "metadata": {},
+    "content": "## Embeddings\n\nOpsMind uses:\n\n```text\nall-MiniLM-L6-v2\n```\n\nto convert text into numerical vector representations.\n\nThe embedding dimension is:\n\n```text\n384\n```\n\nThis allows the system to compare the meaning of a user's question with the meaning of stored engineering knowledge.\n\n---"
+  },
+  {
+    "id": "README--13",
+    "source": "README.md",
+    "metadata": {},
+    "content": "## FAISS Vector Search\n\nOpsMind uses **FAISS** for vector similarity search.\n\nThe generated vector index is:\n\n```text\nknowledge.index\n```\n\nThe system searches the vector database to find knowledge chunks that are semantically related to the user's question.\n\nExample:\n\n```text\nQuestion:\nWhy are orders failing?\n\n        ↓\n\nSemantic Search\n\n        ↓\n\nRelevant knowledge:\n- Order Service\n- Order Service incidents\n- Inventory Service\n- Deployment incidents\n```\n\n---"
+  },
+  {
+    "id": "README--14",
+    "source": "README.md",
+    "metadata": {},
+    "content": "## RAG Answer Generation\n\nAfter retrieving relevant knowledge, OpsMind builds a context containing the retrieved documents.\n\nThe context is sent to the Groq LLM with instructions such as:\n\n```text\nAnswer the user's question using only the provided context.\n\nIf the answer is not available in the context,\nsay that the information is not available\nin the OpsMind knowledge base.\n\nDo not invent facts.\n```\n\nThis helps keep answers grounded in the internal knowledge base.\n\n---"
+  },
+  {
+    "id": "README--15",
+    "source": "README.md",
+    "metadata": {},
+    "content": "## Groq LLM\n\nOpsMind uses Groq for LLM-based answer generation.\n\nThe project currently uses:\n\n```text\nopenai/gpt-oss-20b\n```\n\nThe API key is stored in the `.env` file and is not included directly in the source code.\n\nExample:\n\n```text\nGROQ_API_KEY=your_api_key\n```\n\n---"
+  },
+  {
+    "id": "README--16",
+    "source": "README.md",
+    "metadata": {},
+    "content": "## MCP Integration\n\nOpsMind also provides an MCP server that exposes engineering knowledge as reusable tools.\n\nThe MCP server provides three tools:"
+  },
+  {
+    "id": "README--17",
+    "source": "README.md",
+    "metadata": {},
+    "content": "### 1. Search Knowledge\n\n```text\nsearch_knowledge(query)\n```\n\nSearches the OpsMind knowledge base for relevant engineering information."
+  },
+  {
+    "id": "README--18",
+    "source": "README.md",
+    "metadata": {},
+    "content": "### 2. Search Incidents\n\n```text\nsearch_incidents(query)\n```\n\nSearches incident records for operational problems and previous incidents."
+  },
+  {
+    "id": "README--19",
+    "source": "README.md",
+    "metadata": {},
+    "content": "### 3. Get Service Dependencies\n\n```text\nget_service_dependencies(service)\n```\n\nReturns dependency information for a specific service.\n\nExample:\n\n```text\nOrder Service\n     |\n     +---- Payment API\n     |\n     +---- Inventory Service\n```\n\nThese tools allow an MCP-compatible client or agent to interact with the OpsMind engineering knowledge system.\n\n---"
+  },
+  {
+    "id": "README--20",
+    "source": "README.md",
+    "metadata": {},
+    "content": "## Streamlit Interface\n\nOpsMind provides a simple Streamlit interface.\n\nThe user enters a question:\n\n```text\nWhy are orders failing?\n```\n\nOpsMind then:\n\n```text\nQuestion\n   ↓\nSemant\n```"
+  },
+  {
+    "id": "database-architecture--0",
+    "source": "database-architecture.md",
+    "metadata": {
+      "id": "ARCH-DATABASE",
+      "type": "architecture"
+    },
+    "content": "# Database Architecture\n\nShopSphere services use separate logical databases.\n\nPayment API uses the payment database.\n\nOrder Service uses the order database.\n\nInventory Service uses the inventory database.\n\nAuthentication Service uses the user database.\n\nDatabase connection limits and latency\nare important operational metrics."
+  },
+  {
+    "id": "service-dependencies--0",
+    "source": "service-dependencies.md",
+    "metadata": {
+      "id": "ARCH-DEPENDENCIES",
+      "type": "architecture"
+    },
+    "content": "# Service Dependencies\n\nOrder Service\n    -> Payment API\n    -> Inventory Service\n\nPayment API\n    -> Payment Database\n\nAuthentication Service\n    -> User Database\n    -> Redis\n\nInventory Service\n    -> Inventory Database\n\nNotification Service\n    -> Message Queue"
+  },
+  {
+    "id": "system-architecture--0",
+    "source": "system-architecture.md",
+    "metadata": {
+      "id": "ARCH-SYSTEM",
+      "type": "architecture"
+    },
+    "content": "# ShopSphere System Architecture\n\nShopSphere is an e-commerce platform.\n\nMain services:\n\n- Authentication Service\n- Product Search Service\n- Inventory Service\n- Order Service\n- Payment API\n- Notification Service\n\nThe Order Service depends on Payment and Inventory services."
+  },
+  {
+    "id": "INC-1001-payment-timeout--0",
+    "source": "INC-1001-payment-timeout.md",
+    "metadata": {
+      "id": "INC-1001",
+      "type": "incident",
+      "service": "payment-api",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "# Payment API Database Timeout"
+  },
+  {
+    "id": "INC-1001-payment-timeout--1",
+    "source": "INC-1001-payment-timeout.md",
+    "metadata": {
+      "id": "INC-1001",
+      "type": "incident",
+      "service": "payment-api",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Symptoms\n\nCustomers received HTTP 500 errors while making payments.\n\nPayment response latency increased above 30 seconds."
+  },
+  {
+    "id": "INC-1001-payment-timeout--2",
+    "source": "INC-1001-payment-timeout.md",
+    "metadata": {
+      "id": "INC-1001",
+      "type": "incident",
+      "service": "payment-api",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Root Cause\n\nThe database connection pool was exhausted\nduring a traffic spike."
+  },
+  {
+    "id": "INC-1001-payment-timeout--3",
+    "source": "INC-1001-payment-timeout.md",
+    "metadata": {
+      "id": "INC-1001",
+      "type": "incident",
+      "service": "payment-api",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Resolution\n\n1. Increased database connection pool size.\n2. Restarted payment-api instances.\n3. Added database connection monitoring."
+  },
+  {
+    "id": "INC-1001-payment-timeout--4",
+    "source": "INC-1001-payment-timeout.md",
+    "metadata": {
+      "id": "INC-1001",
+      "type": "incident",
+      "service": "payment-api",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Prevention\n\nAlert when database connection utilization\ncrosses 80%."
+  },
+  {
+    "id": "INC-1002-auth-failure--0",
+    "source": "INC-1002-auth-failure.md",
+    "metadata": {
+      "id": "INC-1002",
+      "type": "incident",
+      "service": "auth-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "# Authentication Login Failure"
+  },
+  {
+    "id": "INC-1002-auth-failure--1",
+    "source": "INC-1002-auth-failure.md",
+    "metadata": {
+      "id": "INC-1002",
+      "type": "incident",
+      "service": "auth-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Symptoms\n\nUsers were unable to log in.\n\nAuthentication requests returned HTTP 401 errors."
+  },
+  {
+    "id": "INC-1002-auth-failure--2",
+    "source": "INC-1002-auth-failure.md",
+    "metadata": {
+      "id": "INC-1002",
+      "type": "incident",
+      "service": "auth-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Root Cause\n\nRedis cache became unavailable."
+  },
+  {
+    "id": "INC-1002-auth-failure--3",
+    "source": "INC-1002-auth-failure.md",
+    "metadata": {
+      "id": "INC-1002",
+      "type": "incident",
+      "service": "auth-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Resolution\n\n1. Restored Redis availability.\n2. Restarted affected authentication instances.\n3. Added Redis health monitoring."
+  },
+  {
+    "id": "INC-1002-auth-failure--4",
+    "source": "INC-1002-auth-failure.md",
+    "metadata": {
+      "id": "INC-1002",
+      "type": "incident",
+      "service": "auth-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Prevention\n\nCreate alerts for Redis connection failures."
+  },
+  {
+    "id": "INC-1003-order-500--0",
+    "source": "INC-1003-order-500.md",
+    "metadata": {
+      "id": "INC-1003",
+      "type": "incident",
+      "service": "order-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "# Order Service HTTP 500 Errors"
+  },
+  {
+    "id": "INC-1003-order-500--1",
+    "source": "INC-1003-order-500.md",
+    "metadata": {
+      "id": "INC-1003",
+      "type": "incident",
+      "service": "order-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Symptoms\n\nCustomers could not create orders.\n\nThe Order API returned HTTP 500 errors."
+  },
+  {
+    "id": "INC-1003-order-500--2",
+    "source": "INC-1003-order-500.md",
+    "metadata": {
+      "id": "INC-1003",
+      "type": "incident",
+      "service": "order-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Root Cause\n\nOrder Service could not connect to the database."
+  },
+  {
+    "id": "INC-1003-order-500--3",
+    "source": "INC-1003-order-500.md",
+    "metadata": {
+      "id": "INC-1003",
+      "type": "incident",
+      "service": "order-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Resolution\n\nDatabase connectivity was restored and\nOrder Service instances were restarted."
+  },
+  {
+    "id": "INC-1003-order-500--4",
+    "source": "INC-1003-order-500.md",
+    "metadata": {
+      "id": "INC-1003",
+      "type": "incident",
+      "service": "order-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Prevention\n\nAdd database connectivity health checks."
+  },
+  {
+    "id": "INC-1004-inventory-sync--0",
+    "source": "INC-1004-inventory-sync.md",
+    "metadata": {
+      "id": "INC-1004",
+      "type": "incident",
+      "service": "inventory-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "# Inventory Synchronization Failure"
+  },
+  {
+    "id": "INC-1004-inventory-sync--1",
+    "source": "INC-1004-inventory-sync.md",
+    "metadata": {
+      "id": "INC-1004",
+      "type": "incident",
+      "service": "inventory-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Symptoms\n\nProduct stock values were outdated."
+  },
+  {
+    "id": "INC-1004-inventory-sync--2",
+    "source": "INC-1004-inventory-sync.md",
+    "metadata": {
+      "id": "INC-1004",
+      "type": "incident",
+      "service": "inventory-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Root Cause\n\nThe inventory synchronization worker stopped processing\nmessages from the order queue."
+  },
+  {
+    "id": "INC-1004-inventory-sync--3",
+    "source": "INC-1004-inventory-sync.md",
+    "metadata": {
+      "id": "INC-1004",
+      "type": "incident",
+      "service": "inventory-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Resolution\n\nThe worker was restarted and queued messages\nwere processed successfully."
+  },
+  {
+    "id": "INC-1004-inventory-sync--4",
+    "source": "INC-1004-inventory-sync.md",
+    "metadata": {
+      "id": "INC-1004",
+      "type": "incident",
+      "service": "inventory-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Prevention\n\nMonitor worker heartbeat and queue backlog."
+  },
+  {
+    "id": "INC-1005-notification-delay--0",
+    "source": "INC-1005-notification-delay.md",
+    "metadata": {
+      "id": "INC-1005",
+      "type": "incident",
+      "service": "notification-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "# Notification Delivery Delay"
+  },
+  {
+    "id": "INC-1005-notification-delay--1",
+    "source": "INC-1005-notification-delay.md",
+    "metadata": {
+      "id": "INC-1005",
+      "type": "incident",
+      "service": "notification-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Symptoms\n\nCustomers received order confirmation emails late."
+  },
+  {
+    "id": "INC-1005-notification-delay--2",
+    "source": "INC-1005-notification-delay.md",
+    "metadata": {
+      "id": "INC-1005",
+      "type": "incident",
+      "service": "notification-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Root Cause\n\nMessage queue backlog increased significantly."
+  },
+  {
+    "id": "INC-1005-notification-delay--3",
+    "source": "INC-1005-notification-delay.md",
+    "metadata": {
+      "id": "INC-1005",
+      "type": "incident",
+      "service": "notification-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Resolution\n\nAdditional notification workers were started."
+  },
+  {
+    "id": "INC-1005-notification-delay--4",
+    "source": "INC-1005-notification-delay.md",
+    "metadata": {
+      "id": "INC-1005",
+      "type": "incident",
+      "service": "notification-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Prevention\n\nConfigure alerts when queue backlog exceeds threshold."
+  },
+  {
+    "id": "INC-1006-search-timeout--0",
+    "source": "INC-1006-search-timeout.md",
+    "metadata": {
+      "id": "INC-1006",
+      "type": "incident",
+      "service": "search-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "# Search Service Timeout"
+  },
+  {
+    "id": "INC-1006-search-timeout--1",
+    "source": "INC-1006-search-timeout.md",
+    "metadata": {
+      "id": "INC-1006",
+      "type": "incident",
+      "service": "search-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Symptoms\n\nProduct searches took more than 10 seconds."
+  },
+  {
+    "id": "INC-1006-search-timeout--2",
+    "source": "INC-1006-search-timeout.md",
+    "metadata": {
+      "id": "INC-1006",
+      "type": "incident",
+      "service": "search-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Root Cause\n\nThe search index contained stale and inefficient indexes."
+  },
+  {
+    "id": "INC-1006-search-timeout--3",
+    "source": "INC-1006-search-timeout.md",
+    "metadata": {
+      "id": "INC-1006",
+      "type": "incident",
+      "service": "search-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Resolution\n\nThe search index was rebuilt."
+  },
+  {
+    "id": "INC-1006-search-timeout--4",
+    "source": "INC-1006-search-timeout.md",
+    "metadata": {
+      "id": "INC-1006",
+      "type": "incident",
+      "service": "search-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Prevention\n\nSchedule regular index health checks."
+  },
+  {
+    "id": "INC-1007-payment-db--0",
+    "source": "INC-1007-payment-db.md",
+    "metadata": {
+      "id": "INC-1007",
+      "type": "incident",
+      "service": "payment-api",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "# Payment Database Connection Failure"
+  },
+  {
+    "id": "INC-1007-payment-db--1",
+    "source": "INC-1007-payment-db.md",
+    "metadata": {
+      "id": "INC-1007",
+      "type": "incident",
+      "service": "payment-api",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Symptoms\n\nPayment transactions intermittently failed."
+  },
+  {
+    "id": "INC-1007-payment-db--2",
+    "source": "INC-1007-payment-db.md",
+    "metadata": {
+      "id": "INC-1007",
+      "type": "incident",
+      "service": "payment-api",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Root Cause\n\nDatabase connection limits were reached."
+  },
+  {
+    "id": "INC-1007-payment-db--3",
+    "source": "INC-1007-payment-db.md",
+    "metadata": {
+      "id": "INC-1007",
+      "type": "incident",
+      "service": "payment-api",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Resolution\n\nDatabase connection limits were increased\nand connection pooling was optimized."
+  },
+  {
+    "id": "INC-1007-payment-db--4",
+    "source": "INC-1007-payment-db.md",
+    "metadata": {
+      "id": "INC-1007",
+      "type": "incident",
+      "service": "payment-api",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Prevention\n\nMonitor active database connections."
+  },
+  {
+    "id": "INC-1008-auth-db--0",
+    "source": "INC-1008-auth-db.md",
+    "metadata": {
+      "id": "INC-1008",
+      "type": "incident",
+      "service": "auth-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "# Authentication Database Failure"
+  },
+  {
+    "id": "INC-1008-auth-db--1",
+    "source": "INC-1008-auth-db.md",
+    "metadata": {
+      "id": "INC-1008",
+      "type": "incident",
+      "service": "auth-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Symptoms\n\nSome users experienced authentication failures."
+  },
+  {
+    "id": "INC-1008-auth-db--2",
+    "source": "INC-1008-auth-db.md",
+    "metadata": {
+      "id": "INC-1008",
+      "type": "incident",
+      "service": "auth-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Root Cause\n\nAuthentication database response time increased."
+  },
+  {
+    "id": "INC-1008-auth-db--3",
+    "source": "INC-1008-auth-db.md",
+    "metadata": {
+      "id": "INC-1008",
+      "type": "incident",
+      "service": "auth-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Resolution\n\nDatabase performance was restored."
+  },
+  {
+    "id": "INC-1008-auth-db--4",
+    "source": "INC-1008-auth-db.md",
+    "metadata": {
+      "id": "INC-1008",
+      "type": "incident",
+      "service": "auth-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Prevention\n\nAdd database latency monitoring."
+  },
+  {
+    "id": "INC-1009-order-deployment--0",
+    "source": "INC-1009-order-deployment.md",
+    "metadata": {
+      "id": "INC-1009",
+      "type": "incident",
+      "service": "order-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "# Order Service Deployment Failure"
+  },
+  {
+    "id": "INC-1009-order-deployment--1",
+    "source": "INC-1009-order-deployment.md",
+    "metadata": {
+      "id": "INC-1009",
+      "type": "incident",
+      "service": "order-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Symptoms\n\nOrder creation failures increased immediately\nafter a deployment."
+  },
+  {
+    "id": "INC-1009-order-deployment--2",
+    "source": "INC-1009-order-deployment.md",
+    "metadata": {
+      "id": "INC-1009",
+      "type": "incident",
+      "service": "order-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Root Cause\n\nA configuration value was incorrect in the new version."
+  },
+  {
+    "id": "INC-1009-order-deployment--3",
+    "source": "INC-1009-order-deployment.md",
+    "metadata": {
+      "id": "INC-1009",
+      "type": "incident",
+      "service": "order-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Resolution\n\nThe deployment was rolled back."
+  },
+  {
+    "id": "INC-1009-order-deployment--4",
+    "source": "INC-1009-order-deployment.md",
+    "metadata": {
+      "id": "INC-1009",
+      "type": "incident",
+      "service": "order-service",
+      "severity": "high",
+      "status": "resolved"
+    },
+    "content": "## Prevention\n\nAdd configuration validation to deployment pipelines."
+  },
+  {
+    "id": "INC-1010-inventory-cache--0",
+    "source": "INC-1010-inventory-cache.md",
+    "metadata": {
+      "id": "INC-1010",
+      "type": "incident",
+      "service": "inventory-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "# Inventory Cache Inconsistency"
+  },
+  {
+    "id": "INC-1010-inventory-cache--1",
+    "source": "INC-1010-inventory-cache.md",
+    "metadata": {
+      "id": "INC-1010",
+      "type": "incident",
+      "service": "inventory-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Symptoms\n\nSome products displayed incorrect stock counts."
+  },
+  {
+    "id": "INC-1010-inventory-cache--2",
+    "source": "INC-1010-inventory-cache.md",
+    "metadata": {
+      "id": "INC-1010",
+      "type": "incident",
+      "service": "inventory-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Root Cause\n\nCache values were not invalidated after stock updates."
+  },
+  {
+    "id": "INC-1010-inventory-cache--3",
+    "source": "INC-1010-inventory-cache.md",
+    "metadata": {
+      "id": "INC-1010",
+      "type": "incident",
+      "service": "inventory-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Resolution\n\nThe affected cache entries were cleared."
+  },
+  {
+    "id": "INC-1010-inventory-cache--4",
+    "source": "INC-1010-inventory-cache.md",
+    "metadata": {
+      "id": "INC-1010",
+      "type": "incident",
+      "service": "inventory-service",
+      "severity": "medium",
+      "status": "resolved"
+    },
+    "content": "## Prevention\n\nAdd cache invalidation checks to inventory updates."
+  },
+  {
+    "id": "deployment-policy--0",
+    "source": "deployment-policy.md",
+    "metadata": {
+      "id": "POLICY-DEPLOYMENT",
+      "type": "policy"
+    },
+    "content": "# Deployment Policy\n\nProduction deployments must:\n\n1. Pass automated tests.\n2. Pass configuration validation.\n3. Have rollback capability.\n4. Be monitored after deployment.\n\nIf an incident begins immediately after deployment,\ndeployment rollback should be considered."
+  },
+  {
+    "id": "escalation-policy--0",
+    "source": "escalation-policy.md",
+    "metadata": {
+      "id": "POLICY-ESCALATION",
+      "type": "policy"
+    },
+    "content": "# Incident Escalation Policy\n\nHigh severity incidents must be escalated\nto the service owner.\n\nDatabase-related incidents should also\ninvolve the database operations team.\n\nSecurity-related incidents must be escalated\nto the security team."
+  },
+  {
+    "id": "incident-severity-policy--0",
+    "source": "incident-severity-policy.md",
+    "metadata": {
+      "id": "POLICY-SEVERITY",
+      "type": "policy"
+    },
+    "content": "# Incident Severity Policy"
+  },
+  {
+    "id": "incident-severity-policy--1",
+    "source": "incident-severity-policy.md",
+    "metadata": {
+      "id": "POLICY-SEVERITY",
+      "type": "policy"
+    },
+    "content": "## Critical\n\nComplete service outage or major customer impact."
+  },
+  {
+    "id": "incident-severity-policy--2",
+    "source": "incident-severity-policy.md",
+    "metadata": {
+      "id": "POLICY-SEVERITY",
+      "type": "policy"
+    },
+    "content": "## High\n\nMajor functionality is affected and\nmany customers may be impacted."
+  },
+  {
+    "id": "incident-severity-policy--3",
+    "source": "incident-severity-policy.md",
+    "metadata": {
+      "id": "POLICY-SEVERITY",
+      "type": "policy"
+    },
+    "content": "## Medium\n\nPartial functionality is affected."
+  },
+  {
+    "id": "incident-severity-policy--4",
+    "source": "incident-severity-policy.md",
+    "metadata": {
+      "id": "POLICY-SEVERITY",
+      "type": "policy"
+    },
+    "content": "## Low\n\nMinor issue with limited customer impact."
+  },
+  {
+    "id": "authentication-failure--0",
+    "source": "authentication-failure.md",
+    "metadata": {
+      "id": "RUNBOOK-AUTH-FAILURE",
+      "type": "runbook",
+      "service": "auth-service"
+    },
+    "content": "# Authentication Failure Runbook"
+  },
+  {
+    "id": "authentication-failure--1",
+    "source": "authentication-failure.md",
+    "metadata": {
+      "id": "RUNBOOK-AUTH-FAILURE",
+      "type": "runbook",
+      "service": "auth-service"
+    },
+    "content": "## Step 1\n\nCheck authentication service status."
+  },
+  {
+    "id": "authentication-failure--2",
+    "source": "authentication-failure.md",
+    "metadata": {
+      "id": "RUNBOOK-AUTH-FAILURE",
+      "type": "runbook",
+      "service": "auth-service"
+    },
+    "content": "## Step 2\n\nCheck Redis availability."
+  },
+  {
+    "id": "authentication-failure--3",
+    "source": "authentication-failure.md",
+    "metadata": {
+      "id": "RUNBOOK-AUTH-FAILURE",
+      "type": "runbook",
+      "service": "auth-service"
+    },
+    "content": "## Step 3\n\nCheck authentication error rate."
+  },
+  {
+    "id": "authentication-failure--4",
+    "source": "authentication-failure.md",
+    "metadata": {
+      "id": "RUNBOOK-AUTH-FAILURE",
+      "type": "runbook",
+      "service": "auth-service"
+    },
+    "content": "## Step 4\n\nCheck recent deployments."
+  },
+  {
+    "id": "authentication-failure--5",
+    "source": "authentication-failure.md",
+    "metadata": {
+      "id": "RUNBOOK-AUTH-FAILURE",
+      "type": "runbook",
+      "service": "auth-service"
+    },
+    "content": "## Step 5\n\nReview previous authentication incidents."
+  },
+  {
+    "id": "database-timeout--0",
+    "source": "database-timeout.md",
+    "metadata": {
+      "id": "RUNBOOK-DATABASE-TIMEOUT",
+      "type": "runbook",
+      "service": "database"
+    },
+    "content": "# Database Timeout Runbook"
+  },
+  {
+    "id": "database-timeout--1",
+    "source": "database-timeout.md",
+    "metadata": {
+      "id": "RUNBOOK-DATABASE-TIMEOUT",
+      "type": "runbook",
+      "service": "database"
+    },
+    "content": "## Step 1\n\nCheck database availability."
+  },
+  {
+    "id": "database-timeout--2",
+    "source": "database-timeout.md",
+    "metadata": {
+      "id": "RUNBOOK-DATABASE-TIMEOUT",
+      "type": "runbook",
+      "service": "database"
+    },
+    "content": "## Step 2\n\nCheck active database connections."
+  },
+  {
+    "id": "database-timeout--3",
+    "source": "database-timeout.md",
+    "metadata": {
+      "id": "RUNBOOK-DATABASE-TIMEOUT",
+      "type": "runbook",
+      "service": "database"
+    },
+    "content": "## Step 3\n\nCheck connection pool utilization."
+  },
+  {
+    "id": "database-timeout--4",
+    "source": "database-timeout.md",
+    "metadata": {
+      "id": "RUNBOOK-DATABASE-TIMEOUT",
+      "type": "runbook",
+      "service": "database"
+    },
+    "content": "## Step 4\n\nCheck database latency."
+  },
+  {
+    "id": "database-timeout--5",
+    "source": "database-timeout.md",
+    "metadata": {
+      "id": "RUNBOOK-DATABASE-TIMEOUT",
+      "type": "runbook",
+      "service": "database"
+    },
+    "content": "## Step 5\n\nReview recent application deployments."
+  },
+  {
+    "id": "database-timeout--6",
+    "source": "database-timeout.md",
+    "metadata": {
+      "id": "RUNBOOK-DATABASE-TIMEOUT",
+      "type": "runbook",
+      "service": "database"
+    },
+    "content": "## Escalation\n\nEscalate to the database operations team\nif connection utilization remains above threshold."
+  },
+  {
+    "id": "inventory-sync-failure--0",
+    "source": "inventory-sync-failure.md",
+    "metadata": {
+      "id": "RUNBOOK-INVENTORY-SYNC",
+      "type": "runbook",
+      "service": "inventory-service"
+    },
+    "content": "# Inventory Synchronization Failure"
+  },
+  {
+    "id": "inventory-sync-failure--1",
+    "source": "inventory-sync-failure.md",
+    "metadata": {
+      "id": "RUNBOOK-INVENTORY-SYNC",
+      "type": "runbook",
+      "service": "inventory-service"
+    },
+    "content": "## Step 1\n\nCheck inventory worker status."
+  },
+  {
+    "id": "inventory-sync-failure--2",
+    "source": "inventory-sync-failure.md",
+    "metadata": {
+      "id": "RUNBOOK-INVENTORY-SYNC",
+      "type": "runbook",
+      "service": "inventory-service"
+    },
+    "content": "## Step 2\n\nCheck message queue backlog."
+  },
+  {
+    "id": "inventory-sync-failure--3",
+    "source": "inventory-sync-failure.md",
+    "metadata": {
+      "id": "RUNBOOK-INVENTORY-SYNC",
+      "type": "runbook",
+      "service": "inventory-service"
+    },
+    "content": "## Step 3\n\nCheck worker heartbeat."
+  },
+  {
+    "id": "inventory-sync-failure--4",
+    "source": "inventory-sync-failure.md",
+    "metadata": {
+      "id": "RUNBOOK-INVENTORY-SYNC",
+      "type": "runbook",
+      "service": "inventory-service"
+    },
+    "content": "## Step 4\n\nRestart the worker if required."
+  },
+  {
+    "id": "inventory-sync-failure--5",
+    "source": "inventory-sync-failure.md",
+    "metadata": {
+      "id": "RUNBOOK-INVENTORY-SYNC",
+      "type": "runbook",
+      "service": "inventory-service"
+    },
+    "content": "## Step 5\n\nVerify inventory synchronization."
+  },
+  {
+    "id": "order-api-500--0",
+    "source": "order-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-ORDER-500",
+      "type": "runbook",
+      "service": "order-service"
+    },
+    "content": "# Order API HTTP 500 Runbook"
+  },
+  {
+    "id": "order-api-500--1",
+    "source": "order-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-ORDER-500",
+      "type": "runbook",
+      "service": "order-service"
+    },
+    "content": "## Step 1\n\nCheck Order API status."
+  },
+  {
+    "id": "order-api-500--2",
+    "source": "order-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-ORDER-500",
+      "type": "runbook",
+      "service": "order-service"
+    },
+    "content": "## Step 2\n\nCheck database connectivity."
+  },
+  {
+    "id": "order-api-500--3",
+    "source": "order-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-ORDER-500",
+      "type": "runbook",
+      "service": "order-service"
+    },
+    "content": "## Step 3\n\nCheck recent deployment history."
+  },
+  {
+    "id": "order-api-500--4",
+    "source": "order-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-ORDER-500",
+      "type": "runbook",
+      "service": "order-service"
+    },
+    "content": "## Step 4\n\nSearch historical order incidents."
+  },
+  {
+    "id": "order-api-500--5",
+    "source": "order-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-ORDER-500",
+      "type": "runbook",
+      "service": "order-service"
+    },
+    "content": "## Step 5\n\nReview application logs."
+  },
+  {
+    "id": "payment-api-500--0",
+    "source": "payment-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-PAYMENT-500",
+      "type": "runbook",
+      "service": "payment-api"
+    },
+    "content": "# Payment API HTTP 500 Runbook"
+  },
+  {
+    "id": "payment-api-500--1",
+    "source": "payment-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-PAYMENT-500",
+      "type": "runbook",
+      "service": "payment-api"
+    },
+    "content": "## Step 1\n\nCheck current Payment API status."
+  },
+  {
+    "id": "payment-api-500--2",
+    "source": "payment-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-PAYMENT-500",
+      "type": "runbook",
+      "service": "payment-api"
+    },
+    "content": "## Step 2\n\nCheck API error rate."
+  },
+  {
+    "id": "payment-api-500--3",
+    "source": "payment-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-PAYMENT-500",
+      "type": "runbook",
+      "service": "payment-api"
+    },
+    "content": "## Step 3\n\nCheck database connection utilization."
+  },
+  {
+    "id": "payment-api-500--4",
+    "source": "payment-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-PAYMENT-500",
+      "type": "runbook",
+      "service": "payment-api"
+    },
+    "content": "## Step 4\n\nCheck recent deployments."
+  },
+  {
+    "id": "payment-api-500--5",
+    "source": "payment-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-PAYMENT-500",
+      "type": "runbook",
+      "service": "payment-api"
+    },
+    "content": "## Step 5\n\nSearch historical payment incidents."
+  },
+  {
+    "id": "payment-api-500--6",
+    "source": "payment-api-500.md",
+    "metadata": {
+      "id": "RUNBOOK-PAYMENT-500",
+      "type": "runbook",
+      "service": "payment-api"
+    },
+    "content": "## Escalation\n\nIf database connectivity is the suspected cause,\ncontact the database operations team."
+  },
+  {
+    "id": "service-degradation--0",
+    "source": "service-degradation.md",
+    "metadata": {
+      "id": "RUNBOOK-SERVICE-DEGRADATION",
+      "type": "runbook",
+      "service": "platform"
+    },
+    "content": "# Service Degradation Runbook"
+  },
+  {
+    "id": "service-degradation--1",
+    "source": "service-degradation.md",
+    "metadata": {
+      "id": "RUNBOOK-SERVICE-DEGRADATION",
+      "type": "runbook",
+      "service": "platform"
+    },
+    "content": "## Step 1\n\nCheck service health."
+  },
+  {
+    "id": "service-degradation--2",
+    "source": "service-degradation.md",
+    "metadata": {
+      "id": "RUNBOOK-SERVICE-DEGRADATION",
+      "type": "runbook",
+      "service": "platform"
+    },
+    "content": "## Step 2\n\nCheck error rate."
+  },
+  {
+    "id": "service-degradation--3",
+    "source": "service-degradation.md",
+    "metadata": {
+      "id": "RUNBOOK-SERVICE-DEGRADATION",
+      "type": "runbook",
+      "service": "platform"
+    },
+    "content": "## Step 3\n\nCheck latency."
+  },
+  {
+    "id": "service-degradation--4",
+    "source": "service-degradation.md",
+    "metadata": {
+      "id": "RUNBOOK-SERVICE-DEGRADATION",
+      "type": "runbook",
+      "service": "platform"
+    },
+    "content": "## Step 4\n\nCheck recent deployments."
+  },
+  {
+    "id": "service-degradation--5",
+    "source": "service-degradation.md",
+    "metadata": {
+      "id": "RUNBOOK-SERVICE-DEGRADATION",
+      "type": "runbook",
+      "service": "platform"
+    },
+    "content": "## Step 5\n\nCheck dependent services."
+  },
+  {
+    "id": "service-degradation--6",
+    "source": "service-degradation.md",
+    "metadata": {
+      "id": "RUNBOOK-SERVICE-DEGRADATION",
+      "type": "runbook",
+      "service": "platform"
+    },
+    "content": "## Step 6\n\nSearch previous incidents."
+  },
+  {
+    "id": "auth-service--0",
+    "source": "auth-service.md",
+    "metadata": {
+      "id": "SERVICE-AUTH",
+      "type": "service",
+      "service": "auth-service",
+      "owner": "identity-team",
+      "criticality": "high"
+    },
+    "content": "# Authentication Service"
+  },
+  {
+    "id": "auth-service--1",
+    "source": "auth-service.md",
+    "metadata": {
+      "id": "SERVICE-AUTH",
+      "type": "service",
+      "service": "auth-service",
+      "owner": "identity-team",
+      "criticality": "high"
+    },
+    "content": "## Purpose\n\nThe Authentication Service handles user login,\ntoken generation, and authentication validation."
+  },
+  {
+    "id": "auth-service--2",
+    "source": "auth-service.md",
+    "metadata": {
+      "id": "SERVICE-AUTH",
+      "type": "service",
+      "service": "auth-service",
+      "owner": "identity-team",
+      "criticality": "high"
+    },
+    "content": "## Dependencies\n\n- User database\n- Redis cache"
+  },
+  {
+    "id": "auth-service--3",
+    "source": "auth-service.md",
+    "metadata": {
+      "id": "SERVICE-AUTH",
+      "type": "service",
+      "service": "auth-service",
+      "owner": "identity-team",
+      "criticality": "high"
+    },
+    "content": "## Common Problems\n\n- Login failures\n- Token generation errors\n- Authentication timeout"
+  },
+  {
+    "id": "auth-service--4",
+    "source": "auth-service.md",
+    "metadata": {
+      "id": "SERVICE-AUTH",
+      "type": "service",
+      "service": "auth-service",
+      "owner": "identity-team",
+      "criticality": "high"
+    },
+    "content": "## Monitoring\n\nMonitor:\n\n- Authentication failure rate\n- Token generation latency\n- Redis availability"
+  },
+  {
+    "id": "inventory-service--0",
+    "source": "inventory-service.md",
+    "metadata": {
+      "id": "SERVICE-INVENTORY",
+      "type": "service",
+      "service": "inventory-service",
+      "owner": "inventory-team",
+      "criticality": "high"
+    },
+    "content": "# Inventory Service"
+  },
+  {
+    "id": "inventory-service--1",
+    "source": "inventory-service.md",
+    "metadata": {
+      "id": "SERVICE-INVENTORY",
+      "type": "service",
+      "service": "inventory-service",
+      "owner": "inventory-team",
+      "criticality": "high"
+    },
+    "content": "## Purpose\n\nThe Inventory Service maintains product stock levels."
+  },
+  {
+    "id": "inventory-service--2",
+    "source": "inventory-service.md",
+    "metadata": {
+      "id": "SERVICE-INVENTORY",
+      "type": "service",
+      "service": "inventory-service",
+      "owner": "inventory-team",
+      "criticality": "high"
+    },
+    "content": "## Dependencies\n\n- Inventory database\n- Order Service"
+  },
+  {
+    "id": "inventory-service--3",
+    "source": "inventory-service.md",
+    "metadata": {
+      "id": "SERVICE-INVENTORY",
+      "type": "service",
+      "service": "inventory-service",
+      "owner": "inventory-team",
+      "criticality": "high"
+    },
+    "content": "## Common Problems\n\n- Stock synchronization failures\n- Stale inventory\n- Database timeout"
+  },
+  {
+    "id": "inventory-service--4",
+    "source": "inventory-service.md",
+    "metadata": {
+      "id": "SERVICE-INVENTORY",
+      "type": "service",
+      "service": "inventory-service",
+      "owner": "inventory-team",
+      "criticality": "high"
+    },
+    "content": "## Monitoring\n\nMonitor:\n\n- Stock synchronization delay\n- Database health\n- Inventory update failures"
+  },
+  {
+    "id": "notification-service--0",
+    "source": "notification-service.md",
+    "metadata": {
+      "id": "SERVICE-NOTIFICATION",
+      "type": "service",
+      "service": "notification-service",
+      "owner": "messaging-team",
+      "criticality": "medium"
+    },
+    "content": "# Notification Service"
+  },
+  {
+    "id": "notification-service--1",
+    "source": "notification-service.md",
+    "metadata": {
+      "id": "SERVICE-NOTIFICATION",
+      "type": "service",
+      "service": "notification-service",
+      "owner": "messaging-team",
+      "criticality": "medium"
+    },
+    "content": "## Purpose\n\nThe Notification Service sends email and SMS notifications."
+  },
+  {
+    "id": "notification-service--2",
+    "source": "notification-service.md",
+    "metadata": {
+      "id": "SERVICE-NOTIFICATION",
+      "type": "service",
+      "service": "notification-service",
+      "owner": "messaging-team",
+      "criticality": "medium"
+    },
+    "content": "## Dependencies\n\n- Email provider\n- SMS provider\n- Message queue"
+  },
+  {
+    "id": "notification-service--3",
+    "source": "notification-service.md",
+    "metadata": {
+      "id": "SERVICE-NOTIFICATION",
+      "type": "service",
+      "service": "notification-service",
+      "owner": "messaging-team",
+      "criticality": "medium"
+    },
+    "content": "## Common Problems\n\n- Delayed notifications\n- Failed email delivery\n- Queue backlog"
+  },
+  {
+    "id": "notification-service--4",
+    "source": "notification-service.md",
+    "metadata": {
+      "id": "SERVICE-NOTIFICATION",
+      "type": "service",
+      "service": "notification-service",
+      "owner": "messaging-team",
+      "criticality": "medium"
+    },
+    "content": "## Monitoring\n\nMonitor:\n\n- Queue size\n- Delivery success rate\n- Processing latency"
+  },
+  {
+    "id": "order-service--0",
+    "source": "order-service.md",
+    "metadata": {
+      "id": "SERVICE-ORDER",
+      "type": "service",
+      "service": "order-service",
+      "owner": "orders-team",
+      "criticality": "high"
+    },
+    "content": "# Order Service"
+  },
+  {
+    "id": "order-service--1",
+    "source": "order-service.md",
+    "metadata": {
+      "id": "SERVICE-ORDER",
+      "type": "service",
+      "service": "order-service",
+      "owner": "orders-team",
+      "criticality": "high"
+    },
+    "content": "## Purpose\n\nThe Order Service creates and manages customer orders."
+  },
+  {
+    "id": "order-service--2",
+    "source": "order-service.md",
+    "metadata": {
+      "id": "SERVICE-ORDER",
+      "type": "service",
+      "service": "order-service",
+      "owner": "orders-team",
+      "criticality": "high"
+    },
+    "content": "## Dependencies\n\n- Payment API\n- Inventory Service\n- User database"
+  },
+  {
+    "id": "order-service--3",
+    "source": "order-service.md",
+    "metadata": {
+      "id": "SERVICE-ORDER",
+      "type": "service",
+      "service": "order-service",
+      "owner": "orders-team",
+      "criticality": "high"
+    },
+    "content": "## Common Problems\n\n- HTTP 500 errors\n- Order creation failures\n- Slow order processing"
+  },
+  {
+    "id": "order-service--4",
+    "source": "order-service.md",
+    "metadata": {
+      "id": "SERVICE-ORDER",
+      "type": "service",
+      "service": "order-service",
+      "owner": "orders-team",
+      "criticality": "high"
+    },
+    "content": "## Monitoring\n\nMonitor:\n\n- Order creation success rate\n- API latency\n- Database errors"
+  },
+  {
+    "id": "payment-api--0",
+    "source": "payment-api.md",
+    "metadata": {
+      "id": "SERVICE-PAYMENT",
+      "type": "service",
+      "service": "payment-api",
+      "owner": "payments-team",
+      "criticality": "high"
+    },
+    "content": "# Payment API"
+  },
+  {
+    "id": "payment-api--1",
+    "source": "payment-api.md",
+    "metadata": {
+      "id": "SERVICE-PAYMENT",
+      "type": "service",
+      "service": "payment-api",
+      "owner": "payments-team",
+      "criticality": "high"
+    },
+    "content": "## Purpose\n\nThe Payment API processes customer payment transactions."
+  },
+  {
+    "id": "payment-api--2",
+    "source": "payment-api.md",
+    "metadata": {
+      "id": "SERVICE-PAYMENT",
+      "type": "service",
+      "service": "payment-api",
+      "owner": "payments-team",
+      "criticality": "high"
+    },
+    "content": "## Dependencies\n\n- Payment database\n- Authentication service\n- Order service"
+  },
+  {
+    "id": "payment-api--3",
+    "source": "payment-api.md",
+    "metadata": {
+      "id": "SERVICE-PAYMENT",
+      "type": "service",
+      "service": "payment-api",
+      "owner": "payments-team",
+      "criticality": "high"
+    },
+    "content": "## Common Problems\n\n- HTTP 500 errors\n- Database connection timeout\n- High latency\n- Payment processing failures"
+  },
+  {
+    "id": "payment-api--4",
+    "source": "payment-api.md",
+    "metadata": {
+      "id": "SERVICE-PAYMENT",
+      "type": "service",
+      "service": "payment-api",
+      "owner": "payments-team",
+      "criticality": "high"
+    },
+    "content": "## Monitoring\n\nImportant metrics:\n\n- Error rate\n- Request latency\n- Database connection utilization"
+  },
+  {
+    "id": "search-service--0",
+    "source": "search-service.md",
+    "metadata": {
+      "id": "SERVICE-SEARCH",
+      "type": "service",
+      "service": "search-service",
+      "owner": "platform-team",
+      "criticality": "medium"
+    },
+    "content": "# Search Service"
+  },
+  {
+    "id": "search-service--1",
+    "source": "search-service.md",
+    "metadata": {
+      "id": "SERVICE-SEARCH",
+      "type": "service",
+      "service": "search-service",
+      "owner": "platform-team",
+      "criticality": "medium"
+    },
+    "content": "## Purpose\n\nThe Search Service provides product search functionality."
+  },
+  {
+    "id": "search-service--2",
+    "source": "search-service.md",
+    "metadata": {
+      "id": "SERVICE-SEARCH",
+      "type": "service",
+      "service": "search-service",
+      "owner": "platform-team",
+      "criticality": "medium"
+    },
+    "content": "## Dependencies\n\n- Search index\n- Product database"
+  },
+  {
+    "id": "search-service--3",
+    "source": "search-service.md",
+    "metadata": {
+      "id": "SERVICE-SEARCH",
+      "type": "service",
+      "service": "search-service",
+      "owner": "platform-team",
+      "criticality": "medium"
+    },
+    "content": "## Common Problems\n\n- Search timeout\n- Stale search index\n- Missing products"
+  },
+  {
+    "id": "search-service--4",
+    "source": "search-service.md",
+    "metadata": {
+      "id": "SERVICE-SEARCH",
+      "type": "service",
+      "service": "search-service",
+      "owner": "platform-team",
+      "criticality": "medium"
+    },
+    "content": "## Monitoring\n\nMonitor:\n\n- Search latency\n- Index freshness\n- Search error rate"
+  }
+]
