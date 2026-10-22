@@ -1,242 +1,208 @@
-# OpsMind — AI-Powered Internal Engineering Knowledge Assistant
 
-OpsMind is an AI-powered internal engineering knowledge assistant designed to help engineering teams quickly investigate operational issues using company knowledge, incident records, service documentation, architecture documents, runbooks, and policies.
+# 🧠 OpsMind — AI-Powered Internal Engineering Knowledge Assistant
 
-The project combines **OKF-based knowledge organization, semantic search, FAISS vector retrieval, RAG, Groq LLM, Streamlit, and MCP tools** into one practical engineering support system.
+OpsMind is an AI-powered internal engineering knowledge assistant designed to help engineering teams investigate operational issues using company knowledge, incident records, service documentation, architecture documents, runbooks, and policies.
+
+The project combines **OKF-based knowledge organization, semantic search, FAISS vector retrieval, Retrieval-Augmented Generation (RAG), Groq LLM, Streamlit, and Model Context Protocol (MCP)** into a practical engineering support system.
 
 ---
 
-## Project Overview
+## 🚀 Project Overview
 
-In a typical engineering environment, operational knowledge is distributed across incident reports, service documentation, architecture documents, runbooks, and company policies.
+In engineering environments, operational knowledge is often distributed across incident reports, service documentation, architecture documents, runbooks, and company policies.
 
 Finding the correct information manually can take time.
 
-OpsMind provides a centralized AI-based interface where engineers can ask questions such as:
+OpsMind provides a centralized AI-powered interface where engineers can ask questions such as:
 
-* Why are orders failing?
-* What should I do when the Payment API returns a 500 error?
-* How do I troubleshoot an authentication failure?
-* What services does the Order Service depend on?
-* Which incidents are related to order failures?
-* What information is available about a particular service?
+- Why are orders failing?
+- What should I do when the Payment API returns a 500 error?
+- How do I troubleshoot an authentication failure?
+- What services does the Order Service depend on?
+- Which incidents are related to order failures?
+- What information is available about a particular service?
 
-OpsMind retrieves relevant internal knowledge and uses an LLM to generate an answer based only on the retrieved context.
-
----
-
-## Key Features
-
-* Internal engineering knowledge base
-* OKF-style structured knowledge organization
-* Document chunking and knowledge-base generation
-* Semantic search using sentence embeddings
-* FAISS vector similarity search
-* RAG-based question answering
-* Groq LLM integration
-* Source-aware answers
-* Relevance filtering for unknown questions
-* Streamlit web interface
-* MCP server with reusable engineering tools
-* Incident and service dependency search
+OpsMind retrieves relevant internal knowledge and uses an LLM to generate answers grounded in the retrieved context.
 
 ---
 
-## Architecture
+## ✨ Key Features
 
-```text
-                    Engineering Knowledge
-                            |
-                            v
-                +-------------------------+
-                |      Knowledge Docs     |
-                |-------------------------|
-                | Services                |
-                | Incidents               |
-                | Runbooks                |
-                | Architecture            |
-                | Policies                |
-                +------------+------------+
-                             |
-                             v
-                     build_okf.py
-                             |
-                             v
-                  Knowledge Base
-                  129 Knowledge Chunks
-                             |
-                             v
-                  Sentence Transformers
-                   all-MiniLM-L6-v2
-                             |
-                             v
-                    384-D Embeddings
-                             |
-                             v
-                         FAISS
-                             |
-                             v
-                 Semantic Retrieval
-                             |
-                             v
-                       Groq LLM
-                             |
-                             v
-                  Answer + Sources
-                             |
-                             v
-                      Streamlit UI
+- Internal engineering knowledge base
+- OKF-style structured knowledge organization
+- Document processing and section-based chunking
+- Semantic search using sentence embeddings
+- FAISS vector similarity search
+- RAG-based question answering
+- Groq LLM integration
+- Source-aware answers
+- Relevance filtering for unknown questions
+- Streamlit web interface
+- MCP server with reusable engineering tools
+- Incident and service dependency search
 
+---
 
-                    MCP Integration
-                            |
-            +---------------+----------------+
-            |               |                |
-            v               v                v
-   search_knowledge  search_incidents  service_dependencies
+## 🏗️ System Architecture
+
+```mermaid
+flowchart TD
+    A["Engineering Knowledge Documents"] --> B["build_okf.py"]
+    B --> C["Structured Knowledge Base"]
+    C --> D["129 Knowledge Chunks"]
+    D --> E["Sentence Transformers"]
+    E --> F["all-MiniLM-L6-v2"]
+    F --> G["384-D Embeddings"]
+    G --> H["FAISS Vector Index"]
+    H --> I["Semantic Retrieval"]
+
+    J["User Question"] --> K["Streamlit UI"]
+    K --> L["Question Embedding"]
+    L --> I
+    I --> M["Relevant Knowledge Chunks"]
+    M --> N["Context Construction"]
+    N --> O["Groq LLM"]
+    O --> P["Grounded Answer"]
+    P --> Q["Answer and Sources"]
+    Q --> K
+
+    R["MCP Server"] --> S["search_knowledge"]
+    R --> T["search_incidents"]
+    R --> U["get_service_dependencies"]
+
+    S --> H
+    T --> C
+    U --> C
 ```
 
+### Architecture Components
+
+| Component | Responsibility |
+|---|---|
+| Knowledge Documents | Store engineering services, incidents, runbooks, architecture, and policies |
+| `build_okf.py` | Process documentation into structured knowledge |
+| Sentence Transformers | Convert text into numerical embeddings |
+| FAISS | Retrieve semantically similar knowledge chunks |
+| RAG Pipeline | Build context from retrieved documents |
+| Groq LLM | Generate context-grounded answers |
+| Streamlit | Provide the user interface |
+| MCP Server | Expose reusable engineering knowledge tools |
+
 ---
 
-## RAG Workflow
+## 🔄 RAG Workflow
 
-OpsMind follows a Retrieval-Augmented Generation workflow.
+OpsMind follows a Retrieval-Augmented Generation workflow to answer engineering questions using relevant internal documentation.
 
-```text
-User Question
-      |
-      v
-Question Embedding
-      |
-      v
-FAISS Semantic Search
-      |
-      v
-Relevant Knowledge Chunks
-      |
-      v
-Context Construction
-      |
-      v
-Groq LLM
-      |
-      v
-Grounded Answer
-      |
-      v
-Sources
+```mermaid
+flowchart TD
+    A["User Question"] --> B["Generate Question Embedding"]
+    B --> C["FAISS Semantic Search"]
+    C --> D["Retrieve Relevant Knowledge Chunks"]
+    D --> E{"Relevant Context Found?"}
+    E -- "Yes" --> F["Construct Context"]
+    F --> G["Groq LLM"]
+    G --> H["Generate Grounded Answer"]
+    H --> I["Return Answer and Sources"]
+    E -- "No" --> J["Return Knowledge Not Available"]
 ```
 
-The LLM receives retrieved company knowledge as context and is instructed to answer using that context rather than inventing information.
+The LLM receives retrieved engineering knowledge as context and is instructed to answer using that context rather than inventing information.
 
 ---
 
-## Knowledge Base
+## 📚 Knowledge Base
 
-The project contains engineering knowledge organized into different categories.
+The project organizes engineering knowledge into different categories.
 
 ### Services
 
-Examples:
+Examples include:
 
-* Authentication Service
-* Order Service
-* Inventory Service
-* Payment API
-* Notification Service
-* Search Service
+- Authentication Service
+- Order Service
+- Inventory Service
+- Payment API
+- Notification Service
+- Search Service
 
 ### Incidents
 
-Examples:
+Examples include:
 
-* Order Service HTTP 500 errors
-* Authentication failures
-* Payment timeout
-* Inventory synchronization issues
-* Deployment failures
-* Database timeout incidents
+- Order Service HTTP 500 errors
+- Authentication failures
+- Payment timeouts
+- Inventory synchronization issues
+- Deployment failures
+- Database timeout incidents
 
 ### Runbooks
 
-Examples:
+Examples include:
 
-* Authentication failure troubleshooting
-* Database timeout troubleshooting
-* Inventory synchronization failure
-* Order API 500 troubleshooting
-* Payment API 500 troubleshooting
-* Service degradation handling
+- Authentication failure troubleshooting
+- Database timeout troubleshooting
+- Inventory synchronization failure
+- Order API 500 troubleshooting
+- Payment API 500 troubleshooting
+- Service degradation handling
 
 ### Architecture
 
-Examples:
+Examples include:
 
-* Database architecture
-* Service dependencies
-* System architecture
+- Database architecture
+- Service dependencies
+- System architecture
 
 ### Policies
 
-Examples:
+Examples include:
 
-* Deployment policy
-* Escalation policy
-* Incident severity policy
-
----
-
-## OKF Knowledge Processing
-
-The project uses `build_okf.py` to process the engineering documentation.
-
-The pipeline is:
-
-```text
-Markdown Documents
-       |
-       v
-Document Processing
-       |
-       v
-Section Chunking
-       |
-       v
-Metadata Extraction
-       |
-       v
-knowledge_base.json
-```
-
-The current knowledge base contains:
-
-```text
-129 knowledge chunks
-```
+- Deployment policy
+- Escalation policy
+- Incident severity policy
 
 ---
 
-## Embeddings
+## 🧩 OKF Knowledge Processing
 
-OpsMind uses:
+The project uses `build_okf.py` to process engineering documentation into structured knowledge chunks.
 
-```text
-all-MiniLM-L6-v2
+### Knowledge Processing Pipeline
+
+```mermaid
+flowchart TD
+    A["Markdown Documents"] --> B["Document Processing"]
+    B --> C["Section-Based Chunking"]
+    C --> D["Metadata Extraction"]
+    D --> E["knowledge_base.json"]
+    E --> F["129 Knowledge Chunks"]
 ```
 
-to convert text into numerical vector representations.
+The current knowledge base contains **129 knowledge chunks**.
 
-The embedding dimension is:
-
-```text
-384
-```
-
-This allows the system to compare the meaning of a user's question with the meaning of stored engineering knowledge.
+These chunks organize engineering information into smaller units that can be searched and retrieved efficiently.
 
 ---
 
-## FAISS Vector Search
+## 🔢 Embeddings
+
+OpsMind uses the `all-MiniLM-L6-v2` sentence-transformer model to convert text into numerical vector representations.
+
+**Embedding configuration:**
+
+- Model: `all-MiniLM-L6-v2`
+- Embedding dimension: `384`
+
+Embeddings allow the system to compare the semantic meaning of a user's question with stored engineering knowledge.
+
+For example, a question about order failures may retrieve information about the Order Service, related incidents, and dependent services, even when the wording differs from the original documents.
+
+---
+
+## 🔍 FAISS Vector Search
 
 OpsMind uses **FAISS** for vector similarity search.
 
@@ -246,34 +212,37 @@ The generated vector index is:
 knowledge.index
 ```
 
-The system searches the vector database to find knowledge chunks that are semantically related to the user's question.
+FAISS searches for knowledge chunks that are semantically related to the user's question.
 
-Example:
+### Example
 
 ```text
 Question:
 Why are orders failing?
-
-        ↓
-
-Semantic Search
-
-        ↓
-
-Relevant knowledge:
-- Order Service
-- Order Service incidents
-- Inventory Service
-- Deployment incidents
+        |
+        v
+Question Embedding
+        |
+        v
+FAISS Semantic Search
+        |
+        v
+Relevant Knowledge
+  - Order Service
+  - Order Service incidents
+  - Inventory Service
+  - Deployment incidents
 ```
+
+The retrieved results are passed to the RAG pipeline for answer generation.
 
 ---
 
-## RAG Answer Generation
+## 🤖 RAG Answer Generation
 
-After retrieving relevant knowledge, OpsMind builds a context containing the retrieved documents.
+After retrieving relevant knowledge, OpsMind builds a context containing the retrieved documents and sends it to the Groq LLM.
 
-The context is sent to the Groq LLM with instructions such as:
+Example system instruction:
 
 ```text
 Answer the user's question using only the provided context.
@@ -285,61 +254,76 @@ in the OpsMind knowledge base.
 Do not invent facts.
 ```
 
-This helps keep answers grounded in the internal knowledge base.
+This approach helps keep answers grounded in internal engineering documentation.
+
+Source-aware responses can help engineers trace information back to the relevant knowledge records when source metadata is available.
+
+**Note:** RAG reduces the risk of unsupported answers but does not guarantee perfect accuracy. Engineers should verify critical operational instructions against the original documentation.
 
 ---
 
-## Groq LLM
+## ⚡ Groq LLM Integration
 
 OpsMind uses Groq for LLM-based answer generation.
 
-The project currently uses:
+**Configured model:**
 
 ```text
 openai/gpt-oss-20b
 ```
 
-The API key is stored in the `.env` file and is not included directly in the source code.
+The API key is stored in a `.env` file rather than being hardcoded in the source code.
 
-Example:
+Example environment variable:
 
-```text
+```env
 GROQ_API_KEY=your_api_key
 ```
 
+### Security Practices
+
+- Keep API keys out of source code.
+- Never commit your real `.env` file to GitHub.
+- Store secrets in environment variables.
+- Configure production secrets through the deployment platform when applicable.
+
 ---
 
-## MCP Integration
+## 🔌 MCP Integration
 
-OpsMind also provides an MCP server that exposes engineering knowledge as reusable tools.
+OpsMind provides an MCP server that exposes engineering knowledge through reusable tools.
 
-The MCP server provides three tools:
+The MCP server provides three tools.
 
 ### 1. Search Knowledge
 
-```text
+```python
 search_knowledge(query)
 ```
 
 Searches the OpsMind knowledge base for relevant engineering information.
 
+**Example use case:** Find documentation related to a Payment API error.
+
 ### 2. Search Incidents
 
-```text
+```python
 search_incidents(query)
 ```
 
-Searches incident records for operational problems and previous incidents.
+Searches incident records for operational problems and related historical incidents.
+
+**Example use case:** Find incidents related to order-processing failures.
 
 ### 3. Get Service Dependencies
 
-```text
+```python
 get_service_dependencies(service)
 ```
 
-Returns dependency information for a specific service.
+Returns available dependency information for a specified service.
 
-Example:
+**Example dependency relationship:**
 
 ```text
 Order Service
@@ -349,24 +333,150 @@ Order Service
      +---- Inventory Service
 ```
 
-These tools allow an MCP-compatible client or agent to interact with the OpsMind engineering knowledge system.
+These tools allow MCP-compatible clients and agents to interact with the OpsMind engineering knowledge system through structured tool calls.
 
 ---
 
-## Streamlit Interface
+## 🖥️ Streamlit Interface
 
-OpsMind provides a simple Streamlit interface.
+OpsMind provides a Streamlit interface where users can submit engineering questions and review generated answers.
 
-The user enters a question:
+### Example Question
 
 ```text
 Why are orders failing?
 ```
 
-OpsMind then:
+### Typical Request Flow
 
 ```text
-Question
-   ↓
-Semant
+User Question
+      |
+      v
+Streamlit Interface
+      |
+      v
+Question Embedding
+      |
+      v
+FAISS Semantic Retrieval
+      |
+      v
+Relevant Knowledge Chunks
+      |
+      v
+Groq LLM
+      |
+      v
+Answer and Sources
 ```
+
+The interface provides a practical way to explore engineering documentation without manually searching multiple files.
+
+---
+
+## 🛠️ Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Python | Core application development |
+| OKF-style knowledge organization | Structured engineering knowledge |
+| Markdown | Engineering source documents |
+| JSON | Structured knowledge storage |
+| Sentence Transformers | Text embeddings |
+| `all-MiniLM-L6-v2` | Embedding model |
+| FAISS | Vector similarity search |
+| RAG | Context-grounded question answering |
+| Groq | LLM inference |
+| Streamlit | Web interface |
+| MCP | Reusable engineering knowledge tools |
+| Git and GitHub | Version control and project hosting |
+
+---
+
+## 📁 Project Structure
+
+The following is an illustrative structure. Adjust filenames and directories to match the actual repository.
+
+```text
+OpsMind/
+├── Knowledge/
+│   ├── Services/
+│   ├── Incidents/
+│   ├── Runbooks/
+│   ├── Architecture/
+│   └── Policies/
+├── build_okf.py
+├── knowledge_base.json
+├── knowledge.index
+├── rag/
+├── mcp_server/
+├── app.py
+├── .env
+├── requirements.txt
+└── README.md
+```
+
+### Main Components
+
+- `build_okf.py` — Processes engineering documentation into structured knowledge.
+- `knowledge_base.json` — Stores the processed knowledge records, if generated under this filename.
+- `knowledge.index` — Stores the FAISS vector index, if generated under this filename.
+- `rag/` — Represents the retrieval and answer-generation components, if organized this way.
+- `mcp_server/` — Represents the MCP server components, if organized this way.
+- `app.py` — Represents the Streamlit entry point, if this is the actual filename.
+- `requirements.txt` — Lists the project's Python dependencies.
+
+---
+
+## 💡 Example Use Cases
+
+OpsMind can support engineering teams with tasks such as:
+
+- Investigating order-processing failures
+- Troubleshooting HTTP 500 errors
+- Finding relevant historical incidents
+- Understanding service dependencies
+- Locating operational runbooks
+- Searching internal engineering documentation
+- Supporting incident investigation and triage
+
+---
+
+## 🔒 Security and Reliability
+
+- Store API keys in environment variables.
+- Exclude `.env` and secret files from version control.
+- Ground generated answers in retrieved source documents.
+- Use a fallback when relevant information is unavailable.
+- Verify operational instructions against the original runbooks before applying changes.
+- Avoid exposing confidential engineering documentation to unauthorized users.
+
+---
+
+## 🚀 Future Improvements
+
+- Add more engineering documents and incident records.
+- Improve retrieval ranking and relevance evaluation.
+- Add automated tests for the RAG pipeline.
+- Improve source citations and retrieval transparency.
+- Add observability and retrieval-performance metrics.
+- Integrate with additional MCP-compatible engineering agents.
+- Add authentication and access control for team deployments.
+- Evaluate answer quality using a representative set of engineering questions.
+
+---
+
+## 👨‍💻 Author
+
+**Divakar Putta**
+
+AI/ML Professional | Generative AI | RAG | AI Agents | Python | LangGraph
+
+GitHub: [diva-hug](https://github.com/diva-hug)
+
+---
+
+## ⭐ Project Goal
+
+OpsMind demonstrates how structured engineering knowledge, semantic retrieval, RAG, LLMs, and MCP tools can work together to help engineering teams find relevant operational information more efficiently.
